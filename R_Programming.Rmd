@@ -1,0 +1,6 @@
+## Vector
+
+set subset be some value
+
+x[x %in% 1:5] <- 0
+x[x < 6] <- 0

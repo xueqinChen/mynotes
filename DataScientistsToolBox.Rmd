@@ -1,0 +1,42 @@
+
+## Git
+
+### Configure git
+
+git config --global user.name "Your Name Here"
+
+git config --global user.email "your_email@example.com"
+
+git config --list
+
+…or create a new repository on the command line
+
+```
+echo "# test" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/xueqinChen/test.git
+git push -u origin master
+```
+
+…or push an existing repository from the command line
+```
+git remote add origin https://github.com/xueqinChen/test.git
+git push -u origin master
+```
+**Add**
+
+* git add . adds all new files (note the period after add, which represents "all files")
+
+* git add -u updates tracking for files that changed names or were deleted
+
+* git add -A or git add --all does both of the previous
+
+**Package**
+
+install.packages("KernSmooth")
+
+library(KernSmooth)
+
+search()
