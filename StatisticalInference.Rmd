@@ -1,0 +1,211 @@
+---
+title: "StatisticalInference"
+author: "Anna"
+date: "2016年5月14日"
+output: html_document
+---
+
+### Conditional Probability
+* let B = an event so that $P(B) > 0$
+* **conditional probability** of an event A, given B is defined as the probability that BOTH A and B occurring divided by the probability of B occurring $$P(A\:|\:B) = \frac{P(A \:\cap\: B)}{P(B)}$$
+* if A and B are ***independent***, then $$P(A\:|\:B) = \frac{P(A)P(B)}{P(B)} = P(A)$$
+* ***example***
+	* for die roll, $A = \{1\}$, $B = \{1, 3, 5\}$, then $$P(1~|~Odd) = P(A\:|\:B) = \frac{P(A \cap B)}{P(B)} = \frac{P(A)}{P(B)} = \frac{1/6}{3/6} = \frac{1}{3}$$
+
+### Baye's Rule
+* definition $$P(B\:|\:A) = \frac{P(A\:|\:B)P(B)}{P(A\:|\:B)P(B)+P(A\:|\:B^c)P(B^c)}$$ where $B^c$ = corresponding probability of event $B$, $P(B^c) = 1 - P(B)$
+
+### Random Variables
+* **random variable** = numeric outcome of experiment
+* **discrete** (what you can count/categories) = assign probabilities to every number/value the variable can take
+	* coin flip, rolling a die, web traffic in a day
+* **continuous** (any number within a continuum) = assign probabilities to the range the variable can take
+	* BMI index, intelligence quotients
+	* ***Note**: limitations of precision in taking the measurements may imply that the values are discrete, but we in fact consider them continuous *
++ `rbinom()`, `rnorm()`, `rgamma()`, `rpois()`, `runif()` = functions to generate random variables from the binomial, normal, Gamma, Poisson, and uniform distributions
+
+	
+	
+### Probability Mass Function (PMF)
+* evaluates the probability that the **discrete random variable** takes on a specific value
+	- measures the chance of a particular outcome happening
+	* always $\ge$ 0 for every possible outcome
+	* $\sum$ possible values that the variable can take = 1
+* `dbinom(k, n, p)` = return the probability of getting `k` successes out of `n` trials, given probability of success is `p`
+
+
+
+### Probability Density Function (PDF)
+* evaluates the probability that the **continuous random variable** takes on a specific value 
+	* always $\ge$ 0 everywhere
+	* total area under curve must = 1
+
+* `dnorm()`, `dgamma()`, `dpois()`, `dunif()` = return probability of a certain value from the normal, Gamma, Poisson, and uniform distributions
+
+
+
+### Cumulative Distribution Function (CDF)
+* CDF of a random variable $X$ = probability that the random variable is $\le$ value $x$
+	* $F(x) = P(X \le x)$ = applies when $X$ is discrete/continuous
+* PDF = derivative of CDF
+	* integrate PDF $\rightarrow$ CDF
+		* `integrate(function, lower=0, upper=1)` $\rightarrow$ can be used to evaluate integrals for a specified range
+* `pbinom()`, `pnorm()`, `pgamma()`, `ppois()`, `punif()` = returns the cumulative probabilities from 0 up to a specified value from the binomial, normal, Gamma, Poisson, and uniform distributions
+
+
+### Survival Function
+* survival function of a random variable $X$ = probability the random variable $> x$, complement of CDF
+    * $S(x) = P(X > x) = 1 - F(x)$, where $F(x) =$ CDF
+
+
+### Quantile
+* the $\alpha^{th}$ quantile of a distribution with distribution function F = point $x_{\alpha}$
+	* $F(x_{\alpha}) = \alpha$
+	* percentile = quantile with $\alpha$ expressed as a percent
+	* median = 50^th^ percentile
+	* $\alpha$% of the possible outcomes lie below it
+
+* `qbeta(quantileInDecimals, 2, 1)` = returns quantiles for beta distribution
+    * works for `qnorm()`, `qbinom()`, `qgamma()`, `qpois()`, etc.
+
+
+### Example
+```{r, echo=TRUE}
+## What is the probability that 75% or fewer of calls get addressed?
+## x = 1 ,y =2 tangle
+## F(x) = P(X <= x) = 1/2 * Base * Height = x square
+## 1 * 0.75 * 2 * 0.75 / 2
+1.5 * 0.75/2
+
+## a b??
+pbeta(0.75, 2, 1)
+
+pbeta(c(0.4, 0.5, 0.75), 2, 1)
+
+## quantitles 25%
+qbeta(0.25, 2, 1)
+
+
+```
+
+### Variance
+* **variance** = measure of spread or dispersion, the expected squared distance of the variable from its mean (expressed in $X$'s units$^2$)
+	- as we can see from above, higher variances $\rightarrow$ more spread, lower $\rightarrow$ smaller spread
+	* $Var(X) = E[(X-\mu)^2] = E[X^2] - E[X]^2$
+	* **standard deviation** $= \sqrt{Var(X)}$ $\rightarrow$ has same units as X
+	
+
+### Sample Variance
+* the **sample variance** is defined as $$S^2 = \frac{\sum_{i=1} (X_i - \bar X)^2}{n-1}$$
+
+
+### Of the mean of random sample
+居然没有分清方差和样本方差
+样本均值的均值与总体均值相等，样本均值的方差是总体方差的1/n
+
+* **distribution for mean of random samples**
+	* expected value of the **mean** of distribution of means = expected value of the sample mean = population mean
+		* $E[\bar X]=\mu$
+	* expected value of the variance of distribution of means
+		* $Var(\bar X) = \sigma^2/n$
+
+* **standard error (SE)**
+	* the standard error of the mean is defined as $$SE_{mean} = \sigma/\sqrt{n}$$
+	* this quantity is effectively the standard deviation of the distribution of a statistic (i.e. mean)
+	* represents variability of means
+
+* **estimate of standard error**
+    * the sample standard error of the mean is defined as $$S/\sqrt{n}$$
+    * estimates how variable sample means ($n$ size) from the population are
+
+### Example -Standard Normal
+* variance = 1
+* means of **n** standard normals (sample) have standard deviation = $1/\sqrt{n}$
+
+```{r message = F, warning = F}
+# specify number of simulations with 10 as number of observations per sample
+nosim <- 1000; n <-10
+# estimated standard deviation of mean
+sd(apply(matrix(rnorm(nosim * n), nosim), 1, mean))
+# actual standard deviation of mean of standard normals
+1 / sqrt(n)
+```
+
+* `rnorm()` = generate samples from the standard normal
+* `matrix()` = puts all samples into a nosim by $n$ matrix, so that each row represents a simulation with `nosim` observations
+* `apply()` = calculates the mean of the $n$ samples
+* `sd()` = returns standard deviation
+
+
+### Example - Standard Uniform
+* standard uniform $\rightarrow$ triangle straight line distribution $\rightarrow$ mean = 1/2 and variance = 1/12
+* means of random samples of $n$ uniforms have have standard deviation of $1/\sqrt{12 \times n}$
+
+
+```{r message = F, warning = F}
+# estimated standard deviation of the sample means
+sd(apply(matrix(runif(nosim * n), nosim), 1, mean))
+# actual standard deviation of the means
+1/sqrt(12*n)
+```
+
+
+### Example - Poisson
+* $Poisson(x^2)$ have variance of $x^2$
+* means of random samples of $n~ Poisson(4)$ have standard deviation of $2/\sqrt{n}$
+
+```{r message = F, warning = F}
+# estimated standard deviation of the sample means
+sd(apply(matrix(rpois(nosim * n, lambda=4), nosim), 1, mean))
+# actual standard deviation of the means
+2/sqrt(n)
+```
+
+
+### Example - Bernoulli
+* for $p = 0.5$, the Bernoulli distribution has variance of 0.25
+* means of random samples of $n$ coin flips have standard deviations of $1 / (2 \sqrt{n})$
+
+```{r message = F, warning = F}
+# estimated standard deviation of the sample means
+sd(apply(matrix(sample(0 : 1, nosim * n, replace = TRUE), nosim), 1, mean))
+# actual standard deviation of the means
+1/(2*sqrt(n))
+```
+
+
+### Likelihood
+概率 用于在已知一些参数的情况下，预测接下来的观测所得到的结果，而
+似然性 则是用于在已知某些观测所得到的结果时，对有关事物的性质的参数进行估计。
+
+Poisson interval
+
+```{r, echo=TRUE}
+x <- 5; t <- 94.32; lambda <- x / t
+round(lambda + c(-1, 1) * qnorm(.975) * sqrt(lambda / t), 3)
+
+poisson.test(x, T = 94.32)$conf
+
+
+exp(confint(glm(x ~ 1 + offset(log(t)), family = poisson(link = log))))
+
+```
+
+
+
+### Confidence intervals
+
+* Gosset's $t$ distribution
+
+```{r, echo=TRUE}
+g1 <- sleep$extra[1:10]
+g2 <- sleep$extra[11:20]
+difference <- g2 - g1
+mn <- mean(difference)
+s <- sd(difference)
+n <- 10
+mn + c(-1, 1) * qt(0.975, n - 1) * s/sqrt(n)
+
+##  why is the same
+t.test(difference)$conf.int
+```

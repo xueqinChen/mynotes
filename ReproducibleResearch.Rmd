@@ -1,0 +1,87 @@
+---
+title: "ReproducibleResearch"
+author: "Anna"
+date: "2016年4月9日"
+output: html_document
+---
+
+
+* **`knitr` package**
+	* written by YihuiXie, built into RStudio
+	* support Markdown, LaTeX, HTML as documentation languages
+	* Exports PDF/HTML
+	* evaluates R markdown documents and return/records the results, and write out a Markdown files
+	* Markdown file can then be converted into HTML using markdown package
+	* solidify package converts R markdown into presentation slides
+* In RStudio, create new R Markdown files by clicking New $\rightarrow$ R Markdown
+	* `========` = indicates title of document (large text)
+	* `$expression$` = indicates LaTeX expression/formatting
+	* \``text`\` = changes text to code format (typewriter font)
+	* \`\`\``{r name, echo = FALSE, results = hide}...`\`\`\` = R code chunk
+		* `name` = name of the code chunk
+		* `echo = FALSE` = turns off the echo of the R code chunk, which means display only the result
+		* ***Note**: by default code in code chunk is echoed = print code AND results *
+		* `results = hide` = hides the results from being placed in the markdown document
+	* inline text computations
+		* \``r` `variable`\` = prints the value of that variable directly inline with the text
+	* incorporating graphics
+		* \`\`\``{r scatterplot, fig.height = 4, fig.width = 6} ... plot() ... `\`\`\` = inserts a plot into markdown document
+			* `scatterplot` = name of this code chunk (can be anything)
+			* `fig.height = 4` = adjusts height of the figure, specifying this alone will produce a rectangular plot rather than a square one by default
+			* `fig.width = 6` = adjusts width of the figure
+		* knitr produces HTML, with the image embedded in HTML using base64 encoding
+			* does not depend on external image files
+			* not efficient but highly transportable
+	* incorporating tables (xtable package: `install.packages("xtable")`)
+		* `xtable`prints the table in html format, which is better presented than plain text normally
+
+```{r showtable, results = "asis", fig.align = 'center'}
+library(datasets)
+## library(xtable)
+fit <- lm(Ozone ~ Wind + Temp + Solar.R, data = airquality)
+## xt <- xtable(summary(fit))
+## print(xt, "html")
+```
+
+* **setting global options**
+	* \`\`\``{r setoptions, echo = FALSE} opts_chunk$set(echo = FALSE, results = "hide")`\`\`\` = sets the default option to not print the code/results unless otherwise specified
+* **common options**
+	* **output**: `results = "asis"` OR `"hide"`
+		* `"asis"` = output to stay in original format and not compiled into HTML
+	* **output**: `echo = TRUE` OR `FALSE`
+	* **figures**: `fig.height = numeric`
+	* **figures**: `fig.width = numeric`
+* **caching computations**
+	* add argument to code chunk: `cache = TRUE`
+	* computes and stores result of code the first time it is run, and calls the stored result directly from file for each subsequent call
+	* useful for complex computations
+	* caveats:
+		* if data/code changes, you will need to re-run cached code chunks
+		* dependencies not checked explicitly (changes in other parts of the code $\rightarrow$ need to re-run the cached code)
+		* if code does something outside of the document (i.e. produce a png file), the operation cannot be cached
+* **"Knit HTML"** button to process the document
+	* alternatively, when not in RStudio, the process can be accomplished through the following
+
+```r
+library(knitr)
+setwd(<working directory>)
+knit2html("document.Rmd")
+browseURL("document.html")
+```
+```{r fig.height=4, message=FALSE, results='asis', cache=TRUE}
+##  highlight=TRUE,
+x <- rnorm(100)
+y <- x + rnorm(100, sd = 0.5)
+par(mar = c(5,4,1,1), las=1)
+plot(x, y, main="My Simulated Data")
+```
+
+* **`Use R Results**
+```{r echo=FALSE, results="hide"}
+time <- format(Sys.time(), "%a %b %d %X %Y")
+rand <-rnorm(1)
+```
+
+The current time is `r time`. My favorite random number is `r rand`.
+
+

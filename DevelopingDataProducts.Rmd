@@ -1,0 +1,18 @@
+---
+title: "DevelopingDataProducts"
+author: "Anna"
+date: "2016/12/11"
+output: pdf_document
+---
+## GoogleVis 
+
+GoogleVis library create interactive maps
+
+
+## Leaflet
+
+Leaflet is a JavaScript library, and then there is an associated Leaflet package for R that makes use of this JavaScript library to create interactive maps within your R environment.
+
+```{r, eval=FALSE}
+install.packages("leaflet")
+```
